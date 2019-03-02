@@ -27,30 +27,30 @@ class Houses extends Component {
         })
   }
 
-  onChange = (e) => {
+  // onChange = (e) => {
 
-    this.setState({ price: e.target.value });
+  //   this.setState({ price: e.target.value });
 
-  }
+  // }
 
-  addHouse = (e) => {
-    const re = /^[0-9\b]+$/;
-    if (this.state.price === '' || re.test(this.state.price)) {
-      services.addHouse({
-        'price': this.state.price
-      })
-        .then(item => {
-          const newHouses = [...this.state.houses];
-          newHouses.push({ id: item.id, price: item.price });
-          this.setState({ houses: newHouses, loading: false });
-        })
-      e.preventDefault();
-      this.setState({ price: '' })
-    }
-    else {
-      alert('please enter valid price')
-    }
-  }
+  // addHouse = (e) => {
+  //   const re = /^[0-9\b]+$/;
+  //   if (this.state.price === '' || re.test(this.state.price)) {
+  //     services.addHouse({
+  //       'price': this.state.price
+  //     })
+  //       .then(item => {
+  //         const newHouses = [...this.state.houses];
+  //         newHouses.push({ id: item.id, price: item.price });
+  //         this.setState({ houses: newHouses, loading: false });
+  //       })
+  //     e.preventDefault();
+  //     this.setState({ price: '' })
+  //   }
+  //   else {
+  //     alert('please enter valid price')
+  //   }
+  // }
 
 
   render() {
@@ -74,10 +74,10 @@ class Houses extends Component {
           ) :
             <div> {housesLIst}</div>
           }
-          <form onSubmit={this.addHouse}>
+          {/* <form onSubmit={this.addHouse}>
             <input type='text' value={this.state.price} placeholder='Add price here' onChange={this.onChange} />
             <input type='submit' value='Add New House' />
-          </form>
+          </form> */}
           <br></br>
           <NavLink className="Nav_link" to="/">Back to Home Page</NavLink>
         </div>

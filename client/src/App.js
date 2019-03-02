@@ -4,6 +4,7 @@ import Home from './components/home'
 import houses from './components/houses'
 import houseItem from './components/houseItem'
 import error from './components/error'
+import addHouses from './components/addHouses';
 
 class App extends Component {
   render() {
@@ -14,6 +15,7 @@ class App extends Component {
             <Route exact path="/" component={Home}></Route>
             <Route exact path="/houses" component={houses}></Route>
             <Route exact path="/houses/:id" component={houseItem}></Route>
+            <Route exact path="/contribute" component={addHouses}></Route>
             <Route component={error} />
           </Switch>
         </div>

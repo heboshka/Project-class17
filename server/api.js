@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const db = require('./db');
+const { validateHouseInput, houseAsSqlParams } = require('./validation');
 
 
 const fackDb = [
@@ -18,6 +20,24 @@ const fackDb = [
 
 ];
 
+const insertHouses = `replace into houses (
+    link,
+    market_date,
+    location_country,
+    location_city,
+    location_address,
+    location_coordinates_lat,
+    location_coordinates_lng,
+    size_living_area,
+    size_rooms,
+    price_value,
+    price_currency,
+    description,
+    title,
+    images,
+    sold
+    ) values ?;`;
+
 let index = (fackDb.length) - 1
 let houseId = fackDb[index].id
 console.log(houseId)
@@ -26,22 +46,41 @@ router.route('/houses')
     res.send(fackDb)
   })
 
-
-  .post((req, res) => {
-    let { price } = req.body;
-    price = parseInt(price, 10);
-
-    if (typeof price == 'number' && price > 0) {
-      houseId++
-      const item = {
-        id: houseId,
-        price
-      }
-      fackDb.push(item)
-      res.json(item)
-    } else {
-      res.status(400).end('please enter valid price');
+  .post(async (req, res) => {
+    if (!Array.isArray(req.body)) {
+      return res.status(400).json({ error: 'Input data should be an array.' });
     }
+    const processedData = req.body.map(houseObj => { return validateHouseInput(houseObj) });
+    const validData = [];
+    const invalidData = [];
+    processedData.forEach(item => {
+      if (item.valid) {
+        validData.push(item);
+      } else {
+        invalidData.push(item);
+      }
+    });
+    const report = {
+      valid: validData.length,
+      invalid: {
+        count: invalidData.length,
+        items: invalidData
+      }
+    };
+
+    if (validData.length) {
+      try {
+        const housesData = validData.map(el => houseAsSqlParams(el.raw));
+        await db.queryPromise(insertHouses, [housesData]);
+        return res.json(report);
+      } catch (err) {
+        return res.status(500).json({ error: 'Database error while recording new information.' + err.message })
+      }
+
+    } else {
+      res.json(report);
+    }
+
   })
 
 router
