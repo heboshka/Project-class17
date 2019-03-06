@@ -2,13 +2,13 @@ import React from 'react';
 
 const Report = ({ report }) => (
   <div>
-    valid houses:{report.valid}
+    you insert {report.valid} valid houses and {report.invalid.count} invalid houses,
+
     <br />
-    invalid houses ({report.invalid.count}): {' '}
     {report.invalid.items.map((data, index) => (
       <div key={index}>
-        messages:<pre>{JSON.stringify(data.error)}</pre>
-        raw:<pre>{JSON.stringify(data.raw, null, 2)}</pre>
+        messages:<pre>{JSON.stringify(report.error)}</pre>
+        raw:<pre>{JSON.stringify(data, null, 2)}</pre>
       </div>)
     )}
   </div>

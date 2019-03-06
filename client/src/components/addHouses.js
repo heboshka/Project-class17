@@ -18,12 +18,7 @@ export default class addHouses extends React.Component {
     })
       .then(response => response.json())
       .then(data => {
-        if (data.error) {
-          this.setState({ error: data.error });
-        } else {
-          this.setState({ error: null, report: data });
-
-        }
+        this.setState({ error: data.error, report: data })
       }).catch((err) => {
         this.setState({ error: err.message });
       })
@@ -31,6 +26,7 @@ export default class addHouses extends React.Component {
 
   render() {
     const { error, report } = this.state;
+
     return (
       <div>
         <form onSubmit={this.SubmitNewHouse}>

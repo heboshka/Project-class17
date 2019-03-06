@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const db = require('./db');
-const { validateHouseInput, houseAsSqlParams } = require('./validation');
+const { validateInput, houseAsSqlParams } = require('./validation');
+
 
 
 const fackDb = [
@@ -50,37 +51,31 @@ router.route('/houses')
     if (!Array.isArray(req.body)) {
       return res.status(400).json({ error: 'Input data should be an array.' });
     }
-    const processedData = req.body.map(houseObj => { return validateHouseInput(houseObj) });
-    const validData = [];
-    const invalidData = [];
-    processedData.forEach(item => {
-      if (item.valid) {
-        validData.push(item);
-      } else {
-        invalidData.push(item);
-      }
-    });
+    const contributeInput = validateInput(req.body);
+    const validHouses = contributeInput.validData;
+    const invalidHouses = contributeInput.invalidData;
+    const errorMes = contributeInput.error
     const report = {
-      valid: validData.length,
+      valid: validHouses.length,
       invalid: {
-        count: invalidData.length,
-        items: invalidData
-      }
+        count: invalidHouses.length,
+        items: invalidHouses
+      },
+      error: errorMes
     };
 
-    if (validData.length) {
+    if (validHouses.length) {
       try {
-        const housesData = validData.map(el => houseAsSqlParams(el.raw));
+        const housesData = validHouses.map(el => houseAsSqlParams(el));
         await db.queryPromise(insertHouses, [housesData]);
         return res.json(report);
       } catch (err) {
         return res.status(500).json({ error: 'Database error while recording new information.' + err.message })
       }
-
-    } else {
+    }
+    else {
       res.json(report);
     }
-
   })
 
 router
@@ -121,4 +116,3 @@ router.use('*', (req, res) => {
 
 });
 module.exports = router;
-
