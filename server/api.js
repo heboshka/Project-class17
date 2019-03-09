@@ -63,6 +63,7 @@ router.route('/houses')
 
     min_price = parseInt(min_price);
     max_price = parseInt(max_price);
+    room_num = parseInt(room_num)
     page = parseInt(page);
 
     if (max_price < min_price) {
@@ -103,8 +104,11 @@ router.route('/houses')
       conditions.push(` and location_city = '${location_city}' `)
     }
 
-    if (room_num) {
+    if (room_num && !Number.isNaN(room_num)) {
       conditions.push(` and size_rooms >= ${room_num} `)
+
+    } else {
+      return res.status(400).json({ error: " please enter positive number for rooms number" });
     }
 
     if (living_area) {
@@ -118,7 +122,7 @@ router.route('/houses')
                             ${ db.escapeId(order_field, true)} ${order_direction}
                           limit ${HOUSES_PER_PAGE}
                           offset ${offset} `;
-    const totalHouses = `select count(*) as total from houses`;
+    const totalHouses = `select count(*) as total from houses where ${conditions.toString().replace(/,/g, "")}`;
 
     try {
       const totalHousesCount = await db.queryPromise(totalHouses);

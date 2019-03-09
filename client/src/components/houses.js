@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import services from '../services/services'
 import { Link } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
+import Pages from './pages'
 
 
 class Houses extends Component {
@@ -30,11 +31,12 @@ class Houses extends Component {
       loading: true,
     });
     services.getHouseList()
-      .then(({ housesList, total }) =>
+      .then(({ housesList, total, per_page }) =>
         this.setState({
           loading: false,
           houses: housesList,
           total: total,
+          per_page: per_page,
           error: false
         })).catch(() => {
           this.setState({ error: true, loading: false });
@@ -43,6 +45,7 @@ class Houses extends Component {
 
   onChange = (e) => {
     const { name, value } = e.target;
+
     this.setState({
       ...this.state,
       SearchCriteria: {
@@ -75,7 +78,6 @@ class Houses extends Component {
     });
     services.filterHouseList(queryString)
       .then(({ housesList, total, per_page }) => {
-        console.log(total)
         this.setState({
           loading: false,
           houses: housesList,
@@ -89,9 +91,22 @@ class Houses extends Component {
     e.preventDefault();
   }
 
+  pageChange = (pageChoosed, e) => {
+    this.setState({
+      ...this.state,
+      SearchCriteria: {
+        ...this.state.SearchCriteria,
+        page: pageChoosed,
+      }
+    }, () => { this.onFilterHouses(e) }
+    )
+  }
 
   render() {
-    const { houses, loading, error, total } = this.state;
+    const { houses, loading, error, total, per_page } = this.state;
+
+    const currentPage = this.state.SearchCriteria.page;
+
 
 
     const housesLIst = !error && houses.length > 0 ? houses.map(house => {
@@ -115,6 +130,8 @@ class Houses extends Component {
           ) :
             <div> {housesLIst}</div>
           }
+
+          <h2> Total houses is : {total}</h2>
           <form onSubmit={this.onFilterHouses}>
             price:
             <br></br>
@@ -132,9 +149,9 @@ class Houses extends Component {
             <br></br>
             <input type='text' name="location_city" value={this.state.SearchCriteria.city} placeholder='city' onChange={this.onChange} />
             <br></br>
-            rooms number:
+            rooms sizes:
             <br></br>
-            <input type='text' name="room_num" value={this.state.SearchCriteria.room_num} placeholder='room_num' onChange={this.onChange} />
+            <input type='text' name="room_num" value={this.state.SearchCriteria.room_num} placeholder='room sizes' onChange={this.onChange} />
             <br></br>
             living area size:
             <br></br>
@@ -150,6 +167,13 @@ class Houses extends Component {
             <input type='submit' value='filter' />
           </form>
           <br></br>
+          <div>
+            <Pages page={currentPage}
+              per_page={per_page}
+              total={total}
+              onPageChoose={this.pageChange}
+            />
+          </div>
 
           <NavLink className="Nav_link" to="/">Back to Home Page</NavLink>
         </div>
