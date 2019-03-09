@@ -77,15 +77,25 @@ class Houses extends Component {
       loading: true,
     });
     services.filterHouseList(queryString)
-      .then(({ housesList, total, per_page }) => {
-        this.setState({
-          loading: false,
-          houses: housesList,
-          total: total,
-          per_page: per_page,
-          error: false
-        })
-      }).catch(() => {
+      .then(({ housesList, total, per_page, error }) => {
+        if (error) {
+          this.setState({
+            error: error,
+            loading: false,
+            houses: [],
+            total: '',
+            per_page: ''
+          });
+        } else {
+          this.setState({
+            loading: false,
+            houses: housesList,
+            total: total,
+            per_page: per_page,
+            error: false
+          })
+        }
+      }).catch((error) => {
         this.setState({ error: true, loading: false });
       })
     e.preventDefault();
@@ -109,7 +119,7 @@ class Houses extends Component {
 
 
 
-    const housesLIst = !error && houses.length > 0 ? houses.map(house => {
+    const housesLIst = !error && houses && houses.length > 0 ? houses.map(house => {
       return (
         <div key={house.id} className="Nav_link">
           <Link to={'/houses/' + house.id}>
@@ -119,7 +129,7 @@ class Houses extends Component {
           </Link>
         </div>
       );
-    }) : <h1>No houses yet </h1>
+    }) : <h1>{error === true ? 'No houses yet' : error}</h1>
 
     return (
       <>

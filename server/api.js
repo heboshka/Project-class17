@@ -60,15 +60,31 @@ router.route('/houses')
     const HOUSES_PER_PAGE = 2;
     const offset = (page - 1) * HOUSES_PER_PAGE;
 
+    if (isNaN(min_price)) {
+      return res.status(400).json({ error: "minimum price should be a number." });
+    }
 
-    min_price = parseInt(min_price);
-    max_price = parseInt(max_price);
-    room_num = parseInt(room_num)
-    page = parseInt(page);
+    if (isNaN(max_price)) {
+      return res.status(400).json({ error: " maximum price should be a number." });
+    }
+
+    if (isNaN(room_num)) {
+      return res.status(400).json({ error: " room size should be a number." });
+    }
+
+    if (isNaN(page)) {
+      return res.status(400).json({ error: " page should be a number." });
+    }
 
     if (max_price < min_price) {
       return res.status(400).json({ error: " maximum price should be bigger than minimum price." });
     }
+
+
+    min_price = parseInt(min_price);
+    max_price = parseInt(max_price);
+    room_num = parseInt(room_num);
+    page = parseInt(page);
 
 
     let order_field, order_direction;
@@ -97,14 +113,14 @@ router.route('/houses')
 
     const conditions = [`price_value between ${min_price} and ${max_price} `];
     if (location_country.length) {
-      conditions.push(` and location_country = '${location_country}' `)
+      conditions.push(` and location_country like '%${location_country}%' `)
     }
 
     if (location_city.length) {
-      conditions.push(` and location_city = '${location_city}' `)
+      conditions.push(` and location_city like '%${location_city}%' `)
     }
 
-    if (room_num && !Number.isNaN(room_num)) {
+    if (room_num && !isNaN(room_num)) {
       conditions.push(` and size_rooms >= ${room_num} `)
 
     } else {

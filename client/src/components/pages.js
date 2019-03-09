@@ -17,26 +17,16 @@ export default class Pages extends React.Component {
 
   render() {
     const { page, per_page, total } = this.props;
-
     const pagesNum = Math.ceil(total / per_page);
-
-
     let pagesArray = [];
     for (let i = 1; i <= pagesNum; i++) {
-
       pagesArray.push(<button value={i} onClick={this.choosePage}>{i}</button>);
     }
-    // console.log(pagesArray)
+
     return (
       <div>
         {pagesArray}
       </div>
-
-
-
-
-
     );
   }
-
 }

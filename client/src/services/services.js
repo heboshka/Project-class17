@@ -6,8 +6,8 @@ export default class housesServices {
   }
   static filterHouseList(queryString) {
     return fetch(`http://localhost:4000/api/houses?${queryString}`)
-      .then(response => response.json()
-      );
+      .then(response => response.json())
+      .catch(error => error);
   }
 
   static getHouseById(id) {
