@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS `houses`;
 CREATE TABLE `houses`(
 `id` int auto_increment not null, 
 `link` VARCHAR (255) not null unique,
-`market_date` date not null,
+`market_date` date not null,//
 `location_country` VARCHAR (50) not null, 
 `location_city` VARCHAR (50) not null,
 `location_address` VARCHAR (100) DEFAULT null,
